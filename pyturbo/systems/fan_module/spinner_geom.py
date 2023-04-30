@@ -3,6 +3,7 @@
 
 import numpy as np
 from cosapp.systems import System
+from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateTopology
 
 from pyturbo.utils import rz_to_3d, slope_to_3d
@@ -28,7 +29,7 @@ class SpinnerGeom(System):
         self.add_inward("apex_kp", np.ones(2), unit="m", desc="fan apex keypoints")
         self.add_inward("mean_angle", 40.0, unit="deg", desc="spinner mean angle")
 
-    def _to_occt(self):
+    def view(self) -> TopoDS_Shape:
         edge = CreateTopology.make_edge(
             CreateBezier.g1_relative_tension(
                 rz_to_3d(self.apex_kp),

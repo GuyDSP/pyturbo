@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 from pathlib import Path
-from typing import Dict
 
 from cosapp.systems import System
-from OCC.Core.TopoDS import TopoDS_Shape
 
 import pyturbo.systems.turbine.data as trb_data
 from pyturbo.systems.channel import Channel
@@ -15,15 +13,15 @@ from pyturbo.systems.gas_generator import GasGenerator
 from pyturbo.systems.inlet import Inlet
 from pyturbo.systems.nacelle import Nacelle, Plug
 from pyturbo.systems.nozzle import Nozzle
-from pyturbo.systems.structures import CoreCowl
+from pyturbo.systems.structures import CoreCowlGeom
 from pyturbo.systems.turbine import Turbine
 from pyturbo.systems.turbofan.turbofan_aero import TurbofanAero
 from pyturbo.systems.turbofan.turbofan_geom import TurbofanGeom
 from pyturbo.systems.turbofan.turbofan_weight import TurbofanWeight
-from pyturbo.utils import JupyterViewable, load_from_json
+from pyturbo.utils import load_from_json
 
 
-class Turbofan(System, JupyterViewable):
+class Turbofan(System):
     """Turbofan assembly system.
 
     Sub-systems
@@ -104,7 +102,7 @@ class Turbofan(System, JupyterViewable):
         self.add_child(Nozzle("secondary_nozzle"), pulling=["pamb"])
         self.add_child(Nacelle("nacelle"))
         self.add_child(Plug("plug"))
-        self.add_child(CoreCowl("core_cowl"))
+        self.add_child(CoreCowlGeom("core_cowl"))
 
         load_from_json(self.turbine, Path(trb_data.__file__).parent / "lpt.json")
 
@@ -258,19 +256,3 @@ class Turbofan(System, JupyterViewable):
         # init
         if init_file:
             load_from_json(self, init_file)
-
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
-        return dict(
-            inlet=self.inlet._to_occt(),
-            fan_module=self.fan_module._to_occt(),
-            fan_duct=self.fan_duct.geom._to_occt(),
-            gas_generator=self.core._to_occt(),
-            tcf=self.tcf.geom._to_occt(),
-            turbine=self.turbine.geom._to_occt(),
-            trf=self.trf.geom._to_occt(),
-            # primary_nozzle=self.primary_nozzle.geom._to_occt(),
-            # secondary_nozzle=self.secondary_nozzle.geom._to_occt(),
-            nacelle=self.nacelle.geom._to_occt(),
-            plug=self.plug.geom._to_occt(),
-            core_cowl=self.core_cowl._to_occt(),
-        )

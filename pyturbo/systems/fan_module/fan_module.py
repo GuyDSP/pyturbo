@@ -13,10 +13,10 @@ from pyturbo.systems.fan_module.fan_module_geom import FanModuleGeom
 from pyturbo.systems.fan_module.spinner_geom import SpinnerGeom
 from pyturbo.systems.mixers import MixerFluid, MixerShaft
 from pyturbo.systems.structures import IntermediateCasing
-from pyturbo.utils import JupyterViewable, load_from_json
+from pyturbo.utils import load_from_json
 
 
-class FanModule(System, JupyterViewable):
+class FanModule(System):
     """Fan assembly model.
 
     The Fan assembly model is made of:
@@ -153,12 +153,3 @@ class FanModule(System, JupyterViewable):
         self.bpr = self.splitter_fluid.fl_fan.W / self.splitter_fluid.fl_booster.W
         self.fan_pr = self.fan.pr
         self.booster_pr = self.booster.pr
-
-    def _to_occt(self):
-        return dict(
-            spinner=self.spinner._to_occt(),
-            fan=self.fan.geom._to_occt(),
-            booster=self.booster.geom._to_occt(),
-            ogv=self.ogv.geom._to_occt(),
-            ic=self.ic.geom._to_occt(),
-        )

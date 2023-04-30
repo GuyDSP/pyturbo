@@ -4,13 +4,14 @@
 import numpy as np
 from cosapp.systems import System
 from OCC.Core.Geom import Geom_RectangularTrimmedSurface
+from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateWire
 from pyoccad.transform import Scale
 
-from pyturbo.utils import JupyterViewable, rz_to_3d
+from pyturbo.utils import rz_to_3d
 
 
-class NacelleGeom(System, JupyterViewable):
+class NacelleGeom(System):
     """A nacelle simple geometrical model.
 
     It is a Short Duct Separated Flow (SDSF) configuration.
@@ -62,7 +63,7 @@ class NacelleGeom(System, JupyterViewable):
             self.ogv_exit_tip_kp[0],
         ]
 
-    def _to_occt(self):
+    def view(self) -> TopoDS_Shape:
 
         external_upstream = CreateBezier.g1_relative_tension(
             rz_to_3d(self.hilite_kp),

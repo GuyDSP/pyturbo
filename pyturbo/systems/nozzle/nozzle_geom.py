@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import numpy as np
+from cosapp.base import System
+from OCC.Core.TopoDS import TopoDS_Shape
 
-from pyturbo.systems.generic.generic_simple_geom import GenericSimpleGeom
+from pyturbo.ports import KeypointsPort
 
 
-class NozzleGeom(GenericSimpleGeom):
+class NozzleGeom(System):
     """Nozzle geometry model.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.
@@ -27,7 +29,8 @@ class NozzleGeom(GenericSimpleGeom):
     """
 
     def setup(self):
-        super().setup()
+        # inputs
+        self.add_input(KeypointsPort, "kp")
 
         # aero
         self.add_outward("area", 1.0, unit="m**2", desc="exit area")
@@ -48,3 +51,6 @@ class NozzleGeom(GenericSimpleGeom):
         r_tip = self.kp.exit_tip_r
         r_hub = self.kp.exit_hub_r
         self.area_exit = np.pi * (r_tip**2 - r_hub**2)
+
+    def view(self) -> TopoDS_Shape:
+        return self.kp.view()

@@ -41,7 +41,7 @@ __all__ = [
     "Channel",
     "IntermediateCasing",
     "FanDuct",
-    "CoreCowl",
+    "CoreCowlGeom",
     "TurbineAero",
     "TurbineGeom",
     "Turbine",

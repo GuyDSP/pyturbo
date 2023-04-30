@@ -1,8 +1,6 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Dict
-
 from cosapp.systems import System
 from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolution
@@ -26,7 +24,7 @@ class Cowl(System):
         self.add_inward("inlet_kp", C1Keypoint(), desc="inlet keypoints")
         self.add_inward("exit_kp", C1Keypoint(), desc="exit keypoints")
 
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
+    def view(self) -> TopoDS_Shape:
         b = CreateBezier.g1_relative_tension(
             rz_to_3d(self.inlet_kp.rz),
             rz_to_3d(self.exit_kp.rz),

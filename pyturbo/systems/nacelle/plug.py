@@ -4,10 +4,9 @@
 from cosapp.systems import System
 
 from pyturbo.systems.nacelle.plug_geom import PlugGeom
-from pyturbo.utils.jupyter_view import JupyterViewable
 
 
-class Plug(System, JupyterViewable):
+class Plug(System):
     """Plug assembly model.
 
     Sub-systems
@@ -27,6 +26,3 @@ class Plug(System, JupyterViewable):
             PlugGeom("geom"),
             pulling=["trf_exit_hub_kp"],
         )
-
-    def _to_occt(self):
-        return self.geom._to_occt()

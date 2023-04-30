@@ -11,10 +11,10 @@ from pyturbo.systems.combustor import Combustor
 from pyturbo.systems.compressor import Compressor
 from pyturbo.systems.gas_generator.gas_generator_geom import GasGeneratorGeom
 from pyturbo.systems.turbine import Turbine
-from pyturbo.utils import JupyterViewable, load_from_json
+from pyturbo.utils import load_from_json
 
 
-class GasGenerator(System, JupyterViewable):
+class GasGenerator(System):
     """A simple gas generator model.
 
     This model includes a compressor, a combustor and a turbine. The power transmission
@@ -82,10 +82,3 @@ class GasGenerator(System, JupyterViewable):
         # connection fluid
         self.connect(self.compressor.fl_out, self.combustor.fl_in)
         self.connect(self.combustor.fl_out, self.turbine.fl_in)
-
-    def _to_occt(self):
-        return dict(
-            compressor=self.compressor.geom._to_occt(),
-            combustor=self.combustor.geom._to_occt(),
-            turbine=self.turbine.geom._to_occt(),
-        )

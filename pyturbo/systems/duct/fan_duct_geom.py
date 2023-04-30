@@ -1,17 +1,16 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Dict
-
 import numpy as np
+from cosapp.base import System
 from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolution, CreateTopology
 
-from pyturbo.systems.generic import GenericSimpleGeom
+from pyturbo.ports import KeypointsPort
 from pyturbo.utils import rz_to_3d, slope_to_3d
 
 
-class FanDuctGeom(GenericSimpleGeom):
+class FanDuctGeom(System):
     """A simple fan duct geometrical model.
 
     Inputs
@@ -23,12 +22,13 @@ class FanDuctGeom(GenericSimpleGeom):
     """
 
     def setup(self):
-        super().setup()
+        # inputs
+        self.add_input(KeypointsPort, "kp")
 
         self.add_inward("core_cowl_slope", -20.0, unit="deg", desc="core cowl slope")
         self.add_inward("exit_tip_slope", 15.0, unit="deg", desc="exit tip slope")
 
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
+    def view(self) -> TopoDS_Shape:
         b1 = CreateBezier.g1_relative_tension(
             rz_to_3d(self.kp.inlet_hub),
             rz_to_3d(self.kp.exit_hub),

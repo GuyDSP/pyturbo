@@ -5,10 +5,9 @@ from cosapp.systems import System
 
 from pyturbo.systems.inlet.inlet_aero import InletAero
 from pyturbo.systems.inlet.inlet_geom import InletGeom
-from pyturbo.utils.jupyter_view import JupyterViewable
 
 
-class Inlet(System, JupyterViewable):
+class Inlet(System):
     """Inlet simple assembly model.
 
     Sub-systems
@@ -49,6 +48,3 @@ class Inlet(System, JupyterViewable):
 
         # connections
         self.connect(self.geom.outwards, self.aero.inwards, "area")
-
-    def _to_occt(self):
-        return self.geom._to_occt()

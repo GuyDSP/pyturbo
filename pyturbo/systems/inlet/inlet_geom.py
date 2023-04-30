@@ -3,12 +3,13 @@
 
 import numpy as np
 from cosapp.systems import System
+from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateWire
 
-from pyturbo.utils import JupyterViewable
+from pyturbo.utils import rz_to_3d
 
 
-class InletGeom(System, JupyterViewable):
+class InletGeom(System):
     """Inlet geometry.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.
@@ -54,10 +55,7 @@ class InletGeom(System, JupyterViewable):
         self.hilite_kp = np.r_[hilite_radius, self.fan_inlet_tip_kp[1] - lip_length]
         self.area = np.pi * hilite_radius**2
 
-    def _to_occt(self):
-        def rz_to_3d(rz):
-            return np.r_[rz[0], 0.0, rz[1]]
-
+    def view(self) -> TopoDS_Shape:
         inlet = CreateBezier.g1_relative_tension(
             rz_to_3d(self.fan_inlet_tip_kp),
             rz_to_3d(self.hilite_kp),

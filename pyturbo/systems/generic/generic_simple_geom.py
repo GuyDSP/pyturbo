@@ -1,8 +1,6 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Dict
-
 from cosapp.systems import System
 from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateRevolution, CreateTopology, CreateWire
@@ -15,10 +13,10 @@ class GenericSimpleGeom(System):
     """A generic simple geometry based on a quasi cylindrical revolution."""
 
     def setup(self):
-        # inwards/outwards
+        # inputs
         self.add_input(KeypointsPort, "kp")
 
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
+    def view(self) -> TopoDS_Shape:
         w = CreateWire.from_points(
             (
                 rz_to_3d(self.kp.inlet_hub),
@@ -30,4 +28,4 @@ class GenericSimpleGeom(System):
         )
 
         shell = CreateRevolution.surface_from_curve(w, CreateAxis.oz())
-        return dict(geom=CreateTopology.make_compound(shell))
+        return CreateTopology.make_compound(shell)

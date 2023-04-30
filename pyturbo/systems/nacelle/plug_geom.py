@@ -3,12 +3,13 @@
 
 import numpy as np
 from cosapp.systems import System
+from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolution
 
-from pyturbo.utils import JupyterViewable, rz_to_3d
+from pyturbo.utils import rz_to_3d
 
 
-class PlugGeom(System, JupyterViewable):
+class PlugGeom(System):
     """A plug geometrical model.
 
     In a turbofan, the plug is the physical part at engine exit (after the
@@ -51,7 +52,7 @@ class PlugGeom(System, JupyterViewable):
             + np.r_[0.0, self.LqD * self.trf_exit_hub_kp[0] * 2.0]
         )
 
-    def _to_occt(self):
+    def view(self) -> TopoDS_Shape:
         bezier = CreateBezier.g1_relative_tension(
             rz_to_3d(self.trf_exit_hub_kp),
             rz_to_3d(self.exit_kp),

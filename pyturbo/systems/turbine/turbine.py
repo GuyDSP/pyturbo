@@ -7,10 +7,10 @@ from cosapp.systems import System
 
 from pyturbo.systems.turbine.turbine_aero import TurbineAero
 from pyturbo.systems.turbine.turbine_geom import TurbineGeom
-from pyturbo.utils import JupyterViewable, load_from_json
+from pyturbo.utils import load_from_json
 
 
-class Turbine(System, JupyterViewable):
+class Turbine(System):
     """Turbine simple assembly model.
 
     Sub-systems
@@ -62,6 +62,3 @@ class Turbine(System, JupyterViewable):
 
         if init_file:
             load_from_json(self, init_file)
-
-    def _to_occt(self):
-        return dict(geom=self.geom._to_occt())

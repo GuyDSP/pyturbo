@@ -4,10 +4,9 @@
 from cosapp.systems import System
 
 from pyturbo.systems.nacelle.nacelle_geom import NacelleGeom
-from pyturbo.utils.jupyter_view import JupyterViewable
 
 
-class Nacelle(System, JupyterViewable):
+class Nacelle(System):
     """Nacelle simple assembly model.
 
     Sub-systems
@@ -32,6 +31,3 @@ class Nacelle(System, JupyterViewable):
                 "fan_diameter",
             ],
         )
-
-    def _to_occt(self):
-        return self.geom._to_occt()

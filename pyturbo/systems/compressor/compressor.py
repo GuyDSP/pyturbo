@@ -7,10 +7,10 @@ from cosapp.systems import System
 
 from pyturbo.systems.compressor.compressor_aero import CompressorAero
 from pyturbo.systems.compressor.compressor_geom import CompressorGeom
-from pyturbo.utils import JupyterViewable, load_from_json
+from pyturbo.utils import load_from_json
 
 
-class Compressor(System, JupyterViewable):
+class Compressor(System):
     """Compressor assembly model.
 
     Sub-systems
@@ -78,6 +78,3 @@ class Compressor(System, JupyterViewable):
 
     def compute(self):
         self.N = self.sh_in.N
-
-    def _to_occt(self):
-        return dict(geom=self.geom._to_occt())

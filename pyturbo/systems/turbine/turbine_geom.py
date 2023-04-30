@@ -1,17 +1,16 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Dict
-
 import numpy as np
+from cosapp.base import System
 from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateTopology, CreateWire
 
-from pyturbo.systems.generic.generic_simple_geom import GenericSimpleGeom
+from pyturbo.ports import KeypointsPort
 from pyturbo.utils import rz_to_3d
 
 
-class TurbineGeom(GenericSimpleGeom):
+class TurbineGeom(System):
     """Turbine geometry.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.
@@ -43,8 +42,10 @@ class TurbineGeom(GenericSimpleGeom):
     """
 
     def setup(self):
-        super().setup()
+        # inputs
+        self.add_input(KeypointsPort, "kp")
 
+        # inwards
         self.add_inward("stage_count", 1)
         self.add_inward(
             "blade_height_ratio",
@@ -65,7 +66,6 @@ class TurbineGeom(GenericSimpleGeom):
         self.add_outward("fp_exit_hub_kp", np.ones(2), unit="m", desc="flowpath exit hub keypoint")
 
     def compute(self):
-        super().compute()
 
         hub_in_r = self.kp.inlet_tip_r * (1 - self.blade_height_ratio)
         hub_out_r = self.kp.exit_tip_r * (1 - self.blade_height_ratio)
@@ -76,7 +76,7 @@ class TurbineGeom(GenericSimpleGeom):
 
         self.fp_exit_hub_kp = self.kp.exit_tip * np.r_[self.exit_hubqtip, 1.0]
 
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
+    def view(self) -> TopoDS_Shape:
         external_edge = CreateBezier.g1_relative_tension(
             rz_to_3d(self.kp.inlet_tip),
             rz_to_3d(self.kp.exit_tip),
@@ -99,4 +99,4 @@ class TurbineGeom(GenericSimpleGeom):
         )
 
         shell = CreateRevolution.surface_from_curve(w, CreateAxis.oz())
-        return dict(geom=CreateTopology.make_compound(shell))
+        return CreateTopology.make_compound(shell)

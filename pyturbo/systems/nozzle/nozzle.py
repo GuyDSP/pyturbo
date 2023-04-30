@@ -1,17 +1,13 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Dict
-
 from cosapp.systems import System
-from OCC.Core.TopoDS import TopoDS_Shape
 
 from pyturbo.systems.nozzle.nozzle_aero import NozzleAero
 from pyturbo.systems.nozzle.nozzle_geom import NozzleGeom
-from pyturbo.utils.jupyter_view import JupyterViewable
 
 
-class Nozzle(System, JupyterViewable):
+class Nozzle(System):
     """Nozzle simple assembly model with geom and aero.
 
     Sub-systems
@@ -48,6 +44,3 @@ class Nozzle(System, JupyterViewable):
 
         # connections
         self.connect(self.geom.outwards, self.aero.inwards, ["area", "area_in", "area_exit"])
-
-    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
-        return self.geom._to_occt()

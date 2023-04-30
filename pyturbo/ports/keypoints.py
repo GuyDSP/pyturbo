@@ -3,6 +3,9 @@
 
 import numpy as np
 from cosapp.ports import Port
+from pyoccad.create import CreateAxis, CreateRevolution, CreateTopology, CreateWire
+
+from pyturbo.utils import rz_to_3d
 
 
 class KeypointsPort(Port):
@@ -64,6 +67,20 @@ class KeypointsPort(Port):
     @property
     def mean_radius(self):
         return np.mean((self.inlet_hub, self.inlet_tip, self.exit_hub, self.exit_tip), axis=0)[0]
+
+    def view(self):
+        w = CreateWire.from_points(
+            (
+                rz_to_3d(self.inlet_hub),
+                rz_to_3d(self.exit_hub),
+                rz_to_3d(self.exit_tip),
+                rz_to_3d(self.inlet_tip),
+            ),
+            auto_close=True,
+        )
+
+        shell = CreateRevolution.surface_from_curve(w, CreateAxis.oz())
+        return CreateTopology.make_compound(shell)
 
 
 class C1Keypoint:
