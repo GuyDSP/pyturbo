@@ -9,7 +9,7 @@ from OCC.Core.TopoDS import TopoDS_Shape
 
 
 def jupyter_view(
-    self,
+    sys,
     *,
     required: Union[Iterable[Union[System, str]], str] = "*",
     options: Dict[str, Dict[str, Any]] = None,
@@ -22,15 +22,18 @@ def jupyter_view(
     except ImportError:
         raise ImportError("Please install 'pyoccad' before using this function")
 
-    super(System, self).__setattr__("_renderer", None)
+    super(System, sys).__setattr__("_renderer", None)
 
     kwargs["view_size"] = kwargs.get("view_size", (1800, 800))
     kwargs["camera_target"] = kwargs.get("camera_target", (1.0, 0.0, 0.0))
     kwargs["camera_position"] = kwargs.get("camera_position", (-2.0, 1.0, 2.0))
-    self._renderer = JupyterThreeJSRenderer(**kwargs)
+    sys._renderer = JupyterThreeJSRenderer(**kwargs)
 
     if options is None:
-        options = {}
+        if "view_options" in sys:
+            options = sys.view_options
+        else:
+            options = {}
 
     def get_shape_options(name):
         split_name = name.split(".")
@@ -45,7 +48,7 @@ def jupyter_view(
     def add_to_renderer(name, shape):
         if isinstance(shape, TopoDS_Shape):
             opt = get_shape_options(name)
-            self._renderer.add_shape(shape, uid=name, **opt)
+            sys._renderer.add_shape(shape, uid=name, **opt)
         elif isinstance(shape, dict):
             for n, s in shape.items():
                 add_to_renderer(".".join((name, n)), s)
@@ -63,15 +66,15 @@ def jupyter_view(
                     d.update({child.name: get_view(child)})
             return d
 
-    for name, shape in get_view(self).items():
+    for name, shape in get_view(sys).items():
         add_to_renderer(name, shape)
 
-    return self._renderer.show()
+    return sys._renderer.show()
 
 
-def update_jupyter_view(self):
+def update_jupyter_view(sys):
     """Update the Jupyter view."""
-    self._renderer.update_shape(self._to_occt(), uid=self.name)
+    sys._renderer.update_shape(sys._to_occt(), uid=sys.name)
 
 
 def add_nacelle_brand(nacelle_geom: System, renderer, brand_path: str):
