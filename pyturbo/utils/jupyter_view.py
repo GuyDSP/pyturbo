@@ -1,20 +1,14 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Any, Dict, Iterable, Union
+from typing import Any, Dict
 
 import numpy as np
 from cosapp.systems import System
 from OCC.Core.TopoDS import TopoDS_Shape
 
 
-def jupyter_view(
-    sys,
-    *,
-    required: Union[Iterable[Union[System, str]], str] = "*",
-    options: Dict[str, Dict[str, Any]] = None,
-    **kwargs
-):
+def jupyter_view(sys, options: Dict[str, Dict[str, Any]] = None, **kwargs):
     """Render the system in a Jupyter notebook."""
 
     try:

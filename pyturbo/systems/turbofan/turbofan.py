@@ -258,15 +258,17 @@ class Turbofan(System):
             load_from_json(self, init_file)
 
         # view options
-        self.add_inward("view_options", 
-                        {
-                            "fan_module": dict(opacity=0.7, face_color="#92B4EC"),
-                            "fan_module.spinner": dict(face_color="#E1E5EA", opacity=1.),
-                            "fan_duct": dict(opacity=0.7),
-                            "core_cowl": dict(opacity=0.7),
-                            "nacelle": dict(face_color="#E1E5EA", opacity=0.6),
-                            "inlet": dict(opacity=1.),
-                            "core": dict(face_color="red", opacity=0.9),
-                            "turbine": dict(face_color="#92B4EC", opacity=0.9),
-                            "trf": dict(opacity=0.6),
-                        })
+        self.add_inward(
+            "view_options",
+            {
+                "fan_module": dict(opacity=0.7, face_color="#92B4EC"),
+                "fan_module.spinner": dict(face_color="#E1E5EA", opacity=1.0),
+                "fan_duct": dict(opacity=0.7),
+                "core_cowl": dict(opacity=0.7),
+                "nacelle": dict(face_color="#E1E5EA", opacity=0.6),
+                "inlet": dict(opacity=1.0),
+                "core": dict(face_color="red", opacity=0.9),
+                "turbine": dict(face_color="#92B4EC", opacity=0.9),
+                "trf": dict(opacity=0.6),
+            },
+        )
