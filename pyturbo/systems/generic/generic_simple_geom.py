@@ -12,8 +12,8 @@ from pyturbo.utils import rz_to_3d
 class GenericSimpleGeom(System):
     """A generic simple geometry based on a quasi cylindrical revolution."""
 
-    def setup(self):
-        # inputs
+    def setup(self):  # noqa: TWI009
+        # inwards/outwards
         self.add_input(KeypointsPort, "kp")
 
     def view(self) -> TopoDS_Shape:

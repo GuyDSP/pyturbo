@@ -89,7 +89,7 @@ class MixerShaft(System):
         if self.n_out > 1:
             self.add_unknown("power_fractions")
 
-    def compute(self):
+    def compute(self):  # noqa: TWI002
 
         # input shafts
         shaft_in_ports = [p for p in self.inputs.values() if type(p) == ShaftPort]

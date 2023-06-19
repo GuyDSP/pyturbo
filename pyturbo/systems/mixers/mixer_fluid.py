@@ -93,7 +93,7 @@ class MixerFluid(System):
         if self.n_out > 1:
             self.add_unknown("fluid_fractions", max_rel_step=0.1)
 
-    def compute(self):
+    def compute(self):  # noqa: TWI002
 
         # input flows
         fluid_in_ports = [p for p in self.inputs.values() if type(p) == FluidPort]

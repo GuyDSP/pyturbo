@@ -20,7 +20,7 @@ class Plug(System):
         position of the plug
     """
 
-    def setup(self):
+    def setup(self):  # noqa: TWI009
         # children
         self.add_child(
             PlugGeom("geom"),

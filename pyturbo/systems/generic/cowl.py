@@ -20,7 +20,7 @@ class Cowl(System):
         outlet cowl keypoints
     """
 
-    def setup(self):
+    def setup(self):  # noqa: TWI009
         self.add_inward("inlet_kp", C1Keypoint(), desc="inlet keypoints")
         self.add_inward("exit_kp", C1Keypoint(), desc="exit keypoints")
 

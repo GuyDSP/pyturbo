@@ -24,7 +24,7 @@ class SpinnerGeom(System):
         spinner mean angle
     """
 
-    def setup(self):
+    def setup(self):  # noqa: TWI009
         self.add_inward("fan_hub_kp", np.ones(2), unit="m", desc="fan hub keypoints")
         self.add_inward("apex_kp", np.ones(2), unit="m", desc="fan apex keypoints")
         self.add_inward("mean_angle", 40.0, unit="deg", desc="spinner mean angle")

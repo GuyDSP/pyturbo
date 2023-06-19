@@ -1,33 +1,32 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import numpy as np
 from cosapp.systems import System
+
+try:
+    from pyoccad.render import JupyterThreeJSRenderer
+except ImportError:
+    raise ImportError("Please install 'pyoccad' before using this module")
+
 from OCC.Core.TopoDS import TopoDS_Shape
 
 
-def jupyter_view(sys, options: Dict[str, Dict[str, Any]] = None, **kwargs):
-    """Render the system in a Jupyter notebook."""
-
-    try:
-        from pyoccad.render import JupyterThreeJSRenderer
-    except ImportError:
-        raise ImportError("Please install 'pyoccad' before using this function")
-
-    super(System, sys).__setattr__("_renderer", None)
+def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwargs):
+    """Render a system in a Jupyter notebook."""
 
     kwargs["view_size"] = kwargs.get("view_size", (1800, 800))
     kwargs["camera_target"] = kwargs.get("camera_target", (1.0, 0.0, 0.0))
     kwargs["camera_position"] = kwargs.get("camera_position", (-2.0, 1.0, 2.0))
-    sys._renderer = JupyterThreeJSRenderer(**kwargs)
+
+    renderer = JupyterThreeJSRenderer(**kwargs)
 
     if options is None:
+        options = {}
         if "view_options" in sys:
             options = sys.view_options
-        else:
-            options = {}
 
     def get_shape_options(name):
         split_name = name.split(".")
@@ -42,36 +41,46 @@ def jupyter_view(sys, options: Dict[str, Dict[str, Any]] = None, **kwargs):
     def add_to_renderer(name, shape):
         if isinstance(shape, TopoDS_Shape):
             opt = get_shape_options(name)
-            sys._renderer.add_shape(shape, uid=name, **opt)
+            renderer.add_shape(shape, uid=name, **opt)
         elif isinstance(shape, dict):
             for n, s in shape.items():
                 add_to_renderer(".".join((name, n)), s)
         else:
             raise TypeError("Unsupported type")
 
-    def get_view(sys):
-        if hasattr(sys, "view"):
-            return {sys.name: sys.view()}
-        else:
-            d = {}
-            for child in sys.children.values():
-                occt = get_view(child)
-                if occt:
-                    d.update({child.name: get_view(child)})
-            return d
-
     for name, shape in get_view(sys).items():
         add_to_renderer(name, shape)
 
-    return sys._renderer.show()
+    return renderer
 
 
-def update_jupyter_view(sys):
+def get_view(sys) -> Union[TopoDS_Shape, Dict[str, TopoDS_Shape]]:
+    """Recursive function to get the view of a system children, only if system has no view."""
+    d = {}
+    if hasattr(sys, "view"):
+        occt_shape = sys.view()
+        if not isinstance(occt_shape, (TopoDS_Shape, dict)):
+            raise TypeError(
+                f"Method view from {sys.name} should return type TopoDS_Shape or dict, \
+                return {type(occt_shape)}"
+            )
+        d[sys.name] = occt_shape
+        return d
+
+    for child in sys.children.values():
+        occt_shape = get_view(child)
+        if occt_shape:
+            d[child.name] = occt_shape
+    return d
+
+
+def update_jupyter_view(sys: System, renderer: "JupyterThreeJSRenderer"):
     """Update the Jupyter view."""
-    sys._renderer.update_shape(sys._to_occt(), uid=sys.name)
+    for name, shape in get_view(sys).items():
+        renderer.update_shape(shape, uid=name)
 
 
-def add_nacelle_brand(nacelle_geom: System, renderer, brand_path: str):
+def add_nacelle_brand(nacelle_geom: System, renderer: "JupyterThreeJSRenderer", brand_path: str):
     """Add brand on nacelle geometry."""
     try:
         from pythreejs import ImageTexture, MeshStandardMaterial

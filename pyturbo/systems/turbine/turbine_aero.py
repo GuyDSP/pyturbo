@@ -113,3 +113,4 @@ class TurbineAero(System):
         self.Wcrit = (
             self.gas.wqa_crit(self.fl_in.Pt, self.fl_in.Tt, tol=1e-6) * self.area_in / self.blokage
         )
+        self.Tt_ratio = self.fl_out.Tt / self.fl_in.Tt
