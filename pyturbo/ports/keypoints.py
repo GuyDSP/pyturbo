@@ -5,8 +5,6 @@ import numpy as np
 from cosapp.ports import Port
 from pyoccad.create import CreateAxis, CreateRevolution, CreateTopology, CreateWire
 
-from pyturbo.utils import rz_to_3d
-
 
 class KeypointsPort(Port):
     """Keypoints of an annular geometry.
@@ -69,6 +67,7 @@ class KeypointsPort(Port):
         return np.mean((self.inlet_hub, self.inlet_tip, self.exit_hub, self.exit_tip), axis=0)[0]
 
     def view(self):
+        from pyturbo.utils import rz_to_3d
         w = CreateWire.from_points(
             (
                 rz_to_3d(self.inlet_hub),
