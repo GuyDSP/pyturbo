@@ -8,6 +8,7 @@ from OCC.Core.TopoDS import TopoDS_Shape
 from pyturbo.ports import KeypointsPort
 from pyturbo.utils import JupyterViewable
 
+
 class ChannelGeom(System, JupyterViewable):
     """Channel geometry model.
 

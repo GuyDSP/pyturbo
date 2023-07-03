@@ -68,6 +68,7 @@ class KeypointsPort(Port):
 
     def view(self):
         from pyturbo.utils import rz_to_3d
+
         w = CreateWire.from_points(
             (
                 rz_to_3d(self.inlet_hub),

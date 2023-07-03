@@ -1,8 +1,8 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Any, Dict
 import logging
+from typing import Any, Dict
 
 import numpy as np
 from cosapp.systems import System
@@ -19,7 +19,9 @@ from OCC.Core.TopoDS import TopoDS_Shape
 logger = logging.getLogger(__name__)
 
 
-def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwargs) -> JupyterThreeJSRenderer:
+def jupyter_view(
+    sys: System, options: Dict[str, Dict[str, Any]] = None, **kwargs
+) -> JupyterThreeJSRenderer:
     """Render a system in a Jupyter notebook."""
 
     kwargs["view_size"] = kwargs.get("view_size", (1800, 800))
@@ -60,8 +62,11 @@ def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwarg
 
 
 def get_view(sys: System) -> Dict[str, TopoDS_Shape]:
-    """Recursive function to get the view of a JupyterViewable system, or recursively check the children."""
-    if not isinstance(sys, JupyterViewable) and hasattr(sys, 'view'):
+    """Get the view of a JupyterViewable system.
+
+    Stops if itself has a view, else go recursively in the children.
+    """
+    if not isinstance(sys, JupyterViewable) and hasattr(sys, "view"):
         logger.warning(
             f"System {sys.name!r} has 'view' function but is not of JupyterViewable class."
         )
@@ -73,7 +78,7 @@ def get_view(sys: System) -> Dict[str, TopoDS_Shape]:
                 f"Method view from {sys.name} should return type TopoDS_Shape or dict, \
                 return {type(occt_shape)}"
             )
-        return {sys.name : occt_shape}
+        return {sys.name: occt_shape}
 
     # check the children
     d = {}
@@ -83,6 +88,7 @@ def get_view(sys: System) -> Dict[str, TopoDS_Shape]:
             d[child.name] = occt_shape
 
     return d
+
 
 def update_jupyter_view(sys: System, renderer: "JupyterThreeJSRenderer"):
     """Update the Jupyter view."""

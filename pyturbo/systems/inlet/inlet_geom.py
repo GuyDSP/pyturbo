@@ -6,8 +6,7 @@ from cosapp.systems import System
 from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateWire
 
-from pyturbo.utils import rz_to_3d
-from pyturbo.utils import JupyterViewable
+from pyturbo.utils import JupyterViewable, rz_to_3d
 
 
 class InletGeom(System, JupyterViewable):

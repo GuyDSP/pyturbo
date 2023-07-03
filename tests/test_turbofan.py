@@ -8,8 +8,8 @@ from cosapp.drivers import NonLinearSolver
 
 import pyturbo.systems.turbofan.data as tf_data
 from pyturbo.systems.turbofan import Turbofan
-
 from pyturbo.utils.jupyter_view import get_view
+
 
 class TestTurbofan:
     """Define tests for the turbofan assembly system."""

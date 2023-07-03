@@ -7,8 +7,7 @@ from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateTopology, CreateWire
 
 from pyturbo.ports import KeypointsPort
-from pyturbo.utils import rz_to_3d
-from pyturbo.utils import JupyterViewable
+from pyturbo.utils import JupyterViewable, rz_to_3d
 
 
 class TurbineGeom(System, JupyterViewable):

@@ -1,7 +1,7 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from pyturbo.utils.jupyter_viewable import JupyterViewable # isort:skip
+from pyturbo.utils.jupyter_viewable import JupyterViewable  # isort:skip
 
 from pyturbo.utils.coords import rz_to_3d, slope_to_3d, slope_to_drdz
 from pyturbo.utils.json_io import load_from_json, save_to_json
