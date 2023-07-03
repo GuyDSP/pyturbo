@@ -6,9 +6,9 @@ from cosapp.base import System
 from OCC.Core.TopoDS import TopoDS_Shape
 
 from pyturbo.ports import KeypointsPort
+from pyturbo.utils import JupyterViewable
 
-
-class ChannelGeom(System):
+class ChannelGeom(System, JupyterViewable):
     """Channel geometry model.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.

@@ -8,9 +8,10 @@ from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolutio
 
 from pyturbo.ports import KeypointsPort
 from pyturbo.utils import rz_to_3d, slope_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class FanDuctGeom(System):
+class FanDuctGeom(System, JupyterViewable):
     """A simple fan duct geometrical model.
 
     Inputs

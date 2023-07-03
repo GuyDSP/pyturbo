@@ -7,9 +7,10 @@ from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolutio
 
 from pyturbo.ports import C1Keypoint
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class Cowl(System):
+class Cowl(System, JupyterViewable):
     """A simple cowl geometrical model.
 
     Inputs

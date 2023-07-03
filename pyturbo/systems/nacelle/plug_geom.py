@@ -7,9 +7,10 @@ from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateEdge, CreateRevolution
 
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class PlugGeom(System):
+class PlugGeom(System, JupyterViewable):
     """A plug geometrical model.
 
     In a turbofan, the plug is the physical part at engine exit (after the

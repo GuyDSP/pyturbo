@@ -9,6 +9,7 @@ from cosapp.drivers import NonLinearSolver
 import pyturbo.systems.turbofan.data as tf_data
 from pyturbo.systems.turbofan import Turbofan
 
+from pyturbo.utils.jupyter_view import get_view
 
 class TestTurbofan:
     """Define tests for the turbofan assembly system."""
@@ -47,6 +48,10 @@ class TestTurbofan:
 
     def test_run_CFM(self):
         assert Turbofan("sys", init_file=Path(tf_data.__file__).parent / "CFM56_7.json")
+
+    def test_get_view(self):
+        sys = self.sys
+        assert get_view(sys) != {}
 
     @pytest.mark.skip("not relevant")
     def test_run_solver(self):

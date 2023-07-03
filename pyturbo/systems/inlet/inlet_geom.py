@@ -7,9 +7,10 @@ from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateWire
 
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class InletGeom(System):
+class InletGeom(System, JupyterViewable):
     """Inlet geometry.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.

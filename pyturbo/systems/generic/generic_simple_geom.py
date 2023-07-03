@@ -7,9 +7,10 @@ from pyoccad.create import CreateAxis, CreateRevolution, CreateTopology, CreateW
 
 from pyturbo.ports import KeypointsPort
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class GenericSimpleGeom(System):
+class GenericSimpleGeom(System, JupyterViewable):
     """A generic simple geometry based on a quasi cylindrical revolution."""
 
     def setup(self):  # noqa: TWI009

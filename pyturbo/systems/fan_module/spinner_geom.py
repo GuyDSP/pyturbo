@@ -7,9 +7,10 @@ from OCC.Core.TopoDS import TopoDS_Shape
 from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateTopology
 
 from pyturbo.utils import rz_to_3d, slope_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class SpinnerGeom(System):
+class SpinnerGeom(System, JupyterViewable):
     """Spinner module geometry.
 
     Inputs

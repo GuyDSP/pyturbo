@@ -6,9 +6,10 @@ from cosapp.base import System
 from OCC.Core.TopoDS import TopoDS_Shape
 
 from pyturbo.ports import KeypointsPort
+from pyturbo.utils import JupyterViewable
 
 
-class CompressorGeom(System):
+class CompressorGeom(System, JupyterViewable):
     """Compressor geometry.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.

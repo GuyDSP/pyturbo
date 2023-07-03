@@ -9,9 +9,10 @@ from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateWir
 from pyoccad.transform import Scale
 
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class NacelleGeom(System):
+class NacelleGeom(System, JupyterViewable):
     """A nacelle simple geometrical model.
 
     It is a Short Duct Separated Flow (SDSF) configuration.

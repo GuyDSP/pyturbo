@@ -8,9 +8,10 @@ from pyoccad.create import CreateAxis, CreateBezier, CreateRevolution, CreateTop
 
 from pyturbo.ports import KeypointsPort
 from pyturbo.utils import rz_to_3d
+from pyturbo.utils import JupyterViewable
 
 
-class TurbineGeom(System):
+class TurbineGeom(System, JupyterViewable):
     """Turbine geometry.
 
     The geometrical envelop is a trapezoidal revolution with fully radial inlet and exit.
