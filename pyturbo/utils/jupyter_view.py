@@ -1,10 +1,13 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from typing import Any, Dict, Union
+from typing import Any, Dict
+import logging
 
 import numpy as np
 from cosapp.systems import System
+
+from pyturbo.utils import JupyterViewable
 
 try:
     from pyoccad.render import JupyterThreeJSRenderer
@@ -13,8 +16,10 @@ except ImportError:
 
 from OCC.Core.TopoDS import TopoDS_Shape
 
+logger = logging.getLogger(__name__)
 
-def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwargs):
+
+def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwargs) -> JupyterThreeJSRenderer:
     """Render a system in a Jupyter notebook."""
 
     kwargs["view_size"] = kwargs.get("view_size", (1800, 800))
@@ -54,25 +59,30 @@ def jupyter_view(sys: System, options: Dict[str, Dict[str, Any]] = None, **kwarg
     return renderer
 
 
-def get_view(sys) -> Union[TopoDS_Shape, Dict[str, TopoDS_Shape]]:
-    """Recursive function to get the view of a system children, only if system has no view."""
-    d = {}
-    if hasattr(sys, "view"):
+def get_view(sys: System) -> Dict[str, TopoDS_Shape]:
+    """Recursive function to get the view of a JupyterViewable system, or recursively check the children."""
+    if not isinstance(sys, JupyterViewable) and hasattr(sys, 'view'):
+        logger.warning(
+            f"System {sys.name!r} has 'view' function but is not of JupyterViewable class."
+        )
+
+    if isinstance(sys, JupyterViewable):
         occt_shape = sys.view()
         if not isinstance(occt_shape, (TopoDS_Shape, dict)):
             raise TypeError(
                 f"Method view from {sys.name} should return type TopoDS_Shape or dict, \
                 return {type(occt_shape)}"
             )
-        d[sys.name] = occt_shape
-        return d
+        return {sys.name : occt_shape}
 
+    # check the children
+    d = {}
     for child in sys.children.values():
         occt_shape = get_view(child)
-        if occt_shape:
+        if occt_shape is not {}:
             d[child.name] = occt_shape
-    return d
 
+    return d
 
 def update_jupyter_view(sys: System, renderer: "JupyterThreeJSRenderer"):
     """Update the Jupyter view."""
