@@ -60,6 +60,8 @@ class TestTurbofan:
         design = sys.add_driver(NonLinearSolver('solver', tol=1e-6, factor = 0.2))
         sys.run_drivers()
 
+        assert True
+
         design.runner.add_unknown('fuel_W')
         design.runner.add_target('thrust')
         design.runner.design.extend(sys.design_methods['scaling'])
@@ -78,3 +80,19 @@ class TestTurbofan:
         sys.run_drivers()
 
         assert pytest.approx(sys.sfc, rel=1e-2) == 0.37
+
+    def test_run_design_method(self):
+        sys = Turbofan("sys", init_file=Path(tf_data.__file__).parent / "CFM56_7.json")
+
+        design = sys.add_driver(NonLinearSolver('solver', tol=1e-6, factor = 0.2))
+        sys.run_drivers()
+
+        design.runner.add_unknown('fuel_W')
+        design.runner.add_target('thrust')
+        design.runner.design.extend(sys.design_methods['scaling'])
+
+        sys.thrust = 200e3
+
+        sys.run_drivers()
+
+        assert pytest.approx(sys.fan_diameter, rel = 0.1) == 2.25
