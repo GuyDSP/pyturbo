@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2023, twiinIT
+# Copyright (C) 2022-2024, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
 from pyturbo.systems.atmosphere import Atmosphere  # isort: skip
@@ -8,9 +8,11 @@ from pyturbo.systems.inlet import Inlet, InletAero, InletGeom
 from pyturbo.systems.nacelle import Nacelle, NacelleGeom, Plug, PlugGeom
 from pyturbo.systems.nozzle import Nozzle, NozzleAero, NozzleGeom
 from pyturbo.systems.turbine import Turbine, TurbineAero, TurbineGeom
+from pyturbo.systems.power_gear_box import PowerGearBox
 
 from pyturbo.systems.fan_module import FanModule  # isort: skip
 from pyturbo.systems.gas_generator import GasGenerator, GasGeneratorGeom  # isort: skip
+from pyturbo.systems.torque_generator import TorqueGenerator  # isort: skip
 from pyturbo.systems.turbofan import (  # isort: skip
     Turbofan,
     TurbofanWithAtm,
@@ -48,6 +50,8 @@ __all__ = [
     "FanModule",
     "GasGeneratorGeom",
     "GasGenerator",
+    "PowerGearBox",
+    "TorqueGenerator",
     "TurbofanAero",
     "TurbofanGeom",
     "TurbofanWeight",
