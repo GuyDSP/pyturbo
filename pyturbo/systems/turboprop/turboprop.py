@@ -83,6 +83,11 @@ class Turboprop(System, JupyterViewable):
         self.connect(self.propeller.outwards, self.aero.inwards, {"thrust": "propeller_thrust"})
         self.connect(self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"})
 
+        # geometry connectors
+        self.connect(self.geom.propeller_kp, self.propeller.kp)
+        self.connect(self.geom.core_kp, self.core.kp)
+        self.connect(self.geom.primary_nozzle_kp, self.primary_nozzle.kp)
+
     def _to_occt(self) -> Dict[str, TopoDS_Shape]:
         return dict(
             torque_generator=self.core._to_occt(),

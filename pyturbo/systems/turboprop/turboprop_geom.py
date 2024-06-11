@@ -183,7 +183,6 @@ class TurbopropGeom(System):
 
         # outwards
         self.add_output(KeypointsPort, "propeller_kp")
-        self.add_output(KeypointsPort, "inlet_kp")
         self.add_output(KeypointsPort, "core_kp")
         self.add_output(KeypointsPort, "primary_nozzle_kp")
 
@@ -210,13 +209,11 @@ class TurbopropGeom(System):
         core_exit_radius = core_inlet_radius * self.core_exit_radius_ratio
         core_length = core_inlet_radius * self.core_length_ratio
 
-        shaft_radius = core_inlet_radius * self.shaft_radius_ratio
-
         primary_nozzle_length = core_inlet_radius * self.primary_nozzle_length_ratio
 
         self.engine_length = propeller_length + core_length
 
-        # fanmodule
+        # propeller
         self.propeller_kp.inlet_hub = np.r_[0.0, 0.0]
         self.propeller_kp.inlet_tip = np.r_[propeller_radius, 0.0]
         self.propeller_kp.exit_hub = self.propeller_kp.inlet_hub + np.r_[0.0, propeller_length]
@@ -225,10 +222,10 @@ class TurbopropGeom(System):
         self.propeller_inlet_tip_kp = self.propeller_kp.inlet_tip
 
         # core
-        self.core_kp.inlet_hub = np.r_[0.0, 0.0]
+        self.core_kp.inlet_hub = np.r_[0.0, propeller_length]
         self.core_kp.inlet_tip = np.r_[core_inlet_radius, self.core_kp.inlet_hub_z]
 
-        self.core_kp.exit_hub = np.r_[0.0, 0.0]
+        self.core_kp.exit_hub = self.core_kp.inlet_hub + np.r_[0.0, core_length]
         self.core_kp.exit_tip = np.r_[core_exit_radius, self.core_kp.exit_hub_z]
 
         # primary nozzle
