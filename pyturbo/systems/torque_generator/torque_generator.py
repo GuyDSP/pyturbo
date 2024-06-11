@@ -81,6 +81,7 @@ class TorqueGenerator(System, JupyterViewable):
 
         # connection shaft
         self.connect(self.turbine.sh_out, self.splitter_shaft.sh_in)
+        self.connect(self.splitter_shaft.sh_comp, self.compressor.sh_in)
 
         # connection fluid
         self.connect(self.compressor.fl_out, self.combustor.fl_in)
