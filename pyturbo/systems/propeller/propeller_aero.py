@@ -101,7 +101,7 @@ class PropellerAero(System):
         self.add_outward("pcnr", 100.0, unit="", desc="Percentage of rotational speed vs reference")
 
         self.add_outward("power", 100.0, unit="", desc="Propeller power")
-        self.add_outward("thrust", 100.0, unit="", desc="Propeller thrust")
+        self.add_outward("thrust", 100.0, unit="N", desc="Propeller thrust")
 
         # off design
         self.add_outward(
