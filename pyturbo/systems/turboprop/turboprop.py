@@ -4,7 +4,7 @@
 from cosapp.systems import System
 
 from pyturbo.systems.inlet import Inlet
-from pyturbo.systems.compressor import Compressor
+from pyturbo.systems.propeller import Propeller
 from pyturbo.systems.torque_generator import TorqueGenerator
 from pyturbo.systems.nozzle import Nozzle
 from pyturbo.systems.power_gear_box import PowerGearBox
@@ -60,7 +60,7 @@ class Turboprop(System):
         self.add_child(Nozzle("primary_nozzle"), pulling=["pamb"])
         self.add_child(PowerGearBox("pgb"))
 
-        self.add_child(Compressor("propeller"))
+        self.add_child(Propeller("propeller"))
 
         self.add_child(TurbopropAero("aero"), pulling=["fuel_W"])
 
@@ -74,4 +74,5 @@ class Turboprop(System):
 
         # aero connectors
         self.connect(self.inlet.outwards, self.aero.inwards, {"drag": "inlet_drag"})
+        self.connect(self.propeller.outwards, self.aero.inwards, {"thrust": "propeller_thrust"})
         self.connect(self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"})
