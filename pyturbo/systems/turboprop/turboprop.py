@@ -1,17 +1,23 @@
 # Copyright (C) 2024, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
+from typing import Dict
+
+from cosapp.systems import System
+from OCC.Core.TopoDS import TopoDS_Shape
+
 from cosapp.systems import System
 
-from pyturbo.systems.inlet import Inlet
 from pyturbo.systems.propeller import Propeller
 from pyturbo.systems.torque_generator import TorqueGenerator
 from pyturbo.systems.nozzle import Nozzle
 from pyturbo.systems.power_gear_box import PowerGearBox
 
-from pyturbo.systems.turboprop import TurbopropAero
+from pyturbo.systems.turboprop import TurbopropAero, TurbopropGeom
 
-class Turboprop(System):
+from pyturbo.utils import JupyterViewable
+
+class Turboprop(System, JupyterViewable):
     """Turboprop assembly system.
 
     Sub-systems
@@ -54,9 +60,11 @@ class Turboprop(System):
     """
 
     def setup(self):
+        # physics
+        self.add_child(TurbopropGeom("geom"), pulling=["propeller_diameter"])
+
         # component
-        self.add_child(Inlet("inlet"), pulling=["fl_in", "pamb"])
-        self.add_child(TorqueGenerator("core"), pulling=["fuel_W"])
+        self.add_child(TorqueGenerator("core"), pulling=["fuel_W", "fl_in"])
         self.add_child(Nozzle("primary_nozzle"), pulling=["pamb"])
         self.add_child(PowerGearBox("pgb"))
 
@@ -69,10 +77,15 @@ class Turboprop(System):
         self.connect(self.pgb.sh_out, self.propeller.sh_in)
 
         # fluid connectors
-        self.connect(self.inlet.fl_out, self.core.fl_in)
         self.connect(self.core.fl_out, self.primary_nozzle.fl_in)
 
         # aero connectors
-        self.connect(self.inlet.outwards, self.aero.inwards, {"drag": "inlet_drag"})
         self.connect(self.propeller.outwards, self.aero.inwards, {"thrust": "propeller_thrust"})
         self.connect(self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"})
+
+    def _to_occt(self) -> Dict[str, TopoDS_Shape]:
+        return dict(
+            torque_generator=self.core._to_occt(),
+            # primary_nozzle=self.primary_nozzle.geom._to_occt(),
+            propeller=self.propeller._to_occt(),
+        )
