@@ -1,15 +1,15 @@
 # Copyright (C) 2024, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from pathlib import Path
-
 from cosapp.systems import System
 
+from pyturbo.systems.inlet import Inlet
 from pyturbo.systems.compressor import Compressor
 from pyturbo.systems.torque_generator import TorqueGenerator
 from pyturbo.systems.nozzle import Nozzle
 from pyturbo.systems.power_gear_box import PowerGearBox
 
+from pyturbo.systems.turboprop import TurbopropAero
 
 class Turboprop(System):
     """Turboprop assembly system.
@@ -53,19 +53,25 @@ class Turboprop(System):
 
     """
 
-    def setup(self, init_file: Path = None):
+    def setup(self):
         # component
+        self.add_child(Inlet("inlet"), pulling=["fl_in", "pamb"])
         self.add_child(TorqueGenerator("core"), pulling=["fuel_W"])
         self.add_child(Nozzle("primary_nozzle"), pulling=["pamb"])
         self.add_child(PowerGearBox("pgb"))
 
         self.add_child(Compressor("propeller"))
 
+        self.add_child(TurbopropAero("aero"), pulling=["fuel_W"])
+
         # shaft connectors
         self.connect(self.core.sh_out, self.pgb.sh_in)
         self.connect(self.pgb.sh_out, self.propeller.sh_in)
 
         # fluid connectors
+        self.connect(self.inlet.fl_out, self.core.fl_in)
         self.connect(self.core.fl_out, self.primary_nozzle.fl_in)
 
-        # solver
+        # aero connectors
+        self.connect(self.inlet.outwards, self.aero.inwards, {"drag": "inlet_drag"})
+        self.connect(self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"})
