@@ -54,14 +54,14 @@ class Propeller(System, JupyterViewable):
             pulling=["kp"],
         )
         self.add_child(
-            PropellerAero("aero"), pulling=["fl_in", "fl_out", "sh_in", "pr", "power", "thrust"]
+            PropellerAero("aero"), pulling=["fl_in", "sh_in", "pr", "power", "thrust"]
         )
 
         # connections
         self.connect(
             self.geom.outwards,
             self.aero.inwards,
-            ["tip_in_r", "tip_out_r", "inlet_area"],
+            {"tip_in_r" : "radius", "inlet_area" : "inlet_area"},
         )
 
         # outwards
