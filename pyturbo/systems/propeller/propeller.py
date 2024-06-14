@@ -3,8 +3,8 @@
 
 from cosapp.systems import System
 
-from pyturbo.systems.propeller.propeller_aero import PropellerAero
 from pyturbo.systems.compressor.compressor_geom import CompressorGeom
+from pyturbo.systems.propeller.propeller_aero import PropellerAero
 from pyturbo.utils import JupyterViewable
 
 
@@ -53,15 +53,13 @@ class Propeller(System, JupyterViewable):
             CompressorGeom("geom"),
             pulling=["kp"],
         )
-        self.add_child(
-            PropellerAero("aero"), pulling=["fl_in", "sh_in", "pr", "power", "thrust"]
-        )
+        self.add_child(PropellerAero("aero"), pulling=["fl_in", "sh_in", "pr", "power", "thrust"])
 
         # connections
         self.connect(
             self.geom.outwards,
             self.aero.inwards,
-            {"tip_in_r" : "radius", "inlet_area" : "inlet_area"},
+            {"tip_in_r": "radius", "inlet_area": "inlet_area"},
         )
 
         # outwards

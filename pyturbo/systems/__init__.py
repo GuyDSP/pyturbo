@@ -7,8 +7,8 @@ from pyturbo.systems.compressor import Compressor, CompressorGeom, CompressorMft
 from pyturbo.systems.inlet import Inlet, InletAero, InletGeom
 from pyturbo.systems.nacelle import Nacelle, NacelleGeom, Plug, PlugGeom
 from pyturbo.systems.nozzle import Nozzle, NozzleAero, NozzleGeom
-from pyturbo.systems.turbine import Turbine, TurbineAero, TurbineGeom
 from pyturbo.systems.power_gear_box import PowerGearBox
+from pyturbo.systems.turbine import Turbine, TurbineAero, TurbineGeom
 
 from pyturbo.systems.fan_module import FanModule  # isort: skip
 from pyturbo.systems.gas_generator import GasGenerator, GasGeneratorGeom  # isort: skip

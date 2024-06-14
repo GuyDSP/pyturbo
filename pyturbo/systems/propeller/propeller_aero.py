@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import numpy as np
-from cosapp.systems import System
 from cosapp.ports.units import convert_units
+from cosapp.systems import System
 
 from pyturbo.ports import FluidPort, ShaftPort
 from pyturbo.thermo import IdealDryAir
@@ -11,7 +11,7 @@ from pyturbo.thermo import IdealDryAir
 
 class PropellerAero(System):
     """A propeller aero simple model.
-    
+
     This model is based on the following references:
     https://skybrary.aero/sites/default/files/bookshelf/3698.pdf
 
@@ -121,7 +121,7 @@ class PropellerAero(System):
         self.phi = vm / self.utip
 
         # load coefficient
-        self.psi = (1 - self.phi / self.phiP)
+        self.psi = 1 - self.phi / self.phiP
         self.eps_psi = delta_h / self.utip**2 - self.psi
 
         self.pcnr = self.sh_in.N / self.xnd * 100.0

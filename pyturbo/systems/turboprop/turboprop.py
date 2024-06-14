@@ -6,16 +6,13 @@ from typing import Dict
 from cosapp.systems import System
 from OCC.Core.TopoDS import TopoDS_Shape
 
-from cosapp.systems import System
-
-from pyturbo.systems.propeller import Propeller
-from pyturbo.systems.torque_generator import TorqueGenerator
 from pyturbo.systems.nozzle import Nozzle
 from pyturbo.systems.power_gear_box import PowerGearBox
-
+from pyturbo.systems.propeller import Propeller
+from pyturbo.systems.torque_generator import TorqueGenerator
 from pyturbo.systems.turboprop import TurbopropAero, TurbopropGeom
-
 from pyturbo.utils import JupyterViewable
+
 
 class Turboprop(System, JupyterViewable):
     """Turboprop assembly system.
@@ -81,7 +78,9 @@ class Turboprop(System, JupyterViewable):
 
         # aero connectors
         self.connect(self.propeller.outwards, self.aero.inwards, {"thrust": "propeller_thrust"})
-        self.connect(self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"})
+        self.connect(
+            self.primary_nozzle.outwards, self.aero.inwards, {"thrust": "primary_nozzle_thrust"}
+        )
 
         # geometry connectors
         self.connect(self.geom.propeller_kp, self.propeller.kp)

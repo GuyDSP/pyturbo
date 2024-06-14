@@ -136,7 +136,6 @@ class TurbopropGeom(System):
         # inwards
         self.add_inward("propeller_diameter", 5.0, unit="m", desc="propeller diameter")
 
-
         self.add_inward(
             "propeller_length_ratio",
             0.2,
@@ -203,7 +202,9 @@ class TurbopropGeom(System):
         # set keypoints to internal components
         propeller_radius = self.propeller_diameter / 2.0
 
-        self.propeller_module_length = propeller_length = propeller_radius * self.propeller_length_ratio
+        self.propeller_module_length = propeller_length = (
+            propeller_radius * self.propeller_length_ratio
+        )
 
         core_inlet_radius = propeller_radius * self.core_inlet_radius_ratio
         core_exit_radius = core_inlet_radius * self.core_exit_radius_ratio

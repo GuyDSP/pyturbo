@@ -1,7 +1,6 @@
 # Copyright (C) 2024, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-import numpy as np
 from cosapp.systems import System
 
 from pyturbo.ports import ShaftPort
@@ -12,16 +11,16 @@ class PowerGearBox(System):
 
     Inputs
     ------
-    
+
     Outputs
     -------
-    
+
     Design methods
     --------------
-    
+
     Good practice
     -------------
-    
+
     """
 
     def setup(self):

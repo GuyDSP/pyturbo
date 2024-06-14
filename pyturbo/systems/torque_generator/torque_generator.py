@@ -10,14 +10,14 @@ import pyturbo.systems.turbine.data as trb_data
 from pyturbo.systems.combustor import Combustor
 from pyturbo.systems.compressor import Compressor
 from pyturbo.systems.gas_generator.gas_generator_geom import GasGeneratorGeom
-from pyturbo.systems.turbine import Turbine
 from pyturbo.systems.mixers import MixerShaft
-
+from pyturbo.systems.turbine import Turbine
 from pyturbo.utils import JupyterViewable, load_from_json
 
 
 class TorqueGenerator(System, JupyterViewable):
     """A simple torque generator model.
+
     Sub-systems
     -----------
     hpc: HPC
