@@ -1,78 +1,74 @@
 # Copyright (C) 2022-2024, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-from pathlib import Path
-
 import numpy as np
 from cosapp.systems import System
 
-import pyturbo.systems.compressor.data as cmp_data
 from pyturbo.systems.compressor import Compressor
 from pyturbo.systems.fan_module import FanModuleGeom
 from pyturbo.systems.generic import GenericSimpleView, GenericSystemView
 from pyturbo.systems.mixers import MixerFluid, MixerShaft
 from pyturbo.systems.structures import Channel, IntermediateCasing
-from pyturbo.utils import load_from_json
 
 
 class FanModule(System):
     """Fan assembly model.
 
     The Fan assembly model is made of:
-    - spinner,
-    - fan,
-    - ogv (outlet guided vanes),
-    - booster,
-    - ic (intermediate casing),
+        - spinner,
+        - fan,
+        - ogv (outlet guided vanes),
+        - booster,
+        - ic (intermediate casing),
 
-    Sub-systems
-    -----------
-    fan: Fan
-        rotor
-    ogv: Stator
-        outlet guided vane in the secondary flow
-    booster: Booster
-        multi stage compressor link to the LP shaft
-    ic: IntermediateCasing
-        intermediate casing suports lp shaft front bearings, and forward mounts
+        Sub-systems
+        -----------
+        fan: Fan
+            rotor
+        ogv: Stator
+            outlet guided vane in the secondary flow
+        booster: Booster
+            multi stage compressor link to the LP shaft
+        ic: IntermediateCasing
+            intermediate casing suports lp shaft front bearings, and forward mounts
 
-    splitter_shaft: MixerShaft
-        split power from LP shaft toward booster and fan shaft
-    splitter_fluid: MixerFluid
-        split fluid flow from fan toward booster and ogv
+        splitter_shaft: MixerShaft
+            split power from LP shaft toward booster and fan shaft
+        splitter_fluid: MixerFluid
+            split fluid flow from fan toward booster and ogv
 
-    geom: FanModuleGeom
-        sub systems key points generated from the fan module envelop
-    view: FanModuleView
-        compute visualisation
+        geom: FanModuleGeom
+            sub systems key points generated from the fan module envelop
+        view: FanModuleView
+            compute visualisation
 
-    Inputs
-    ------
-    kp: KeypointsPort
-        fan module geometrical envelop
-    fl_in: FluidPort
-        fluid going into the fan madule
-    sh_in: FluidShaft
-        shaft driving the fan madule
+        Inputs
+        ------
+        kp: KeypointsPort
+            fan module geometrical envelop
+        fl_in: FluidPort
+            fluid going into the fan madule
+        sh_in: FluidShaft
+            shaft driving the fan madule
 
-    Outputs
-    -------
-    fl_booster: FluidPort
-        fluid leaving the booster
-    fl_ogv: FluidPort
-        fluid leaving the ogv
+        Outputs
+        -------
+        fl_booster: FluidPort
+            fluid leaving the booster
+        fl_ogv: FluidPort
+            fluid leaving the ogv
 
-    bpr[-]: float, default=1.0
-        by pass ratio = secondary flow / primary flow
-    pr[-]: float, default=1.0
-        pressure ration = fan.pr * booster.pr
+        bpr[-]: float, default=1.0
+            by pass ratio = secondary flow / primary flow
+        pr[-]: float, default=1.0
+            pressure ration = fan.pr * booster.pr
 
-    Good practice
-    -------------
-    1:
-        init mass flow split between booster and fan at the good level of magnitude
-    2:
-        init mass flow split between booster shaft and fan shaft at the good level of magnitude
+        Good practice
+        -------------
+        1:
+            init mass flow split between booster and fan at the good level of magnitude
+        2:
+            init mass flow split between booster shaft and fan shaft at the good level of magnitude
     """
 
     def setup(self):
@@ -80,14 +76,14 @@ class FanModule(System):
         children_name = ["spinner", "fan", "ogv", "booster", "ic"]
 
         # component
-        self.add_child(Compressor("fan"), pulling=["N"])
-        self.add_child(Compressor("booster"))
+        self.add_child(Compressor("fan", config="fan"), pulling={"N": "N", "pr": "fan_pr"})
+        self.add_child(Compressor("booster", config="booster"), pulling={"pr": "booster_pr"})
         self.add_child(Channel("ogv"))
         self.add_child(IntermediateCasing("ic"), pulling=["fl_core", "fl_bypass"])
         self.add_child(GenericSimpleView("spinner"))
 
         # physics
-        self.add_child(FanModuleGeom("geom"), pulling=["fan_diameter", "length"])
+        self.add_child(FanModuleGeom("geom"), pulling=["kp"])
 
         # numerics
         self.add_child(
@@ -132,29 +128,20 @@ class FanModule(System):
 
         # inwards/outwards
         self.add_outward("bpr", 1.0, unit="", desc="By pass ratio")
-        self.add_outward("fan_pr", 1.0, unit="", desc="fan pressure ratio")
-        self.add_outward("booster_pr", 1.0, unit="", desc="booster pressure ratio")
 
         # design methods
         scaling = self.add_design_method("scaling")
 
-        scaling.extend(self.fan.design_methods["scaling_fan"])
-        scaling.extend(self.booster.design_methods["scaling_booster"])
+        scaling.extend(self.fan.design_methods["scaling"])
+        scaling.extend(self.booster.design_methods["scaling"])
 
         # init
-        load_from_json(self.fan, Path(cmp_data.__file__).parent / "fan.json")
-        load_from_json(self.booster, Path(cmp_data.__file__).parent / "booster.json")
-
-        self.booster.stage_count = 4
-
         self.sh_in.power = 20e6
         self.sh_in.N = 5100.0
-        self.fl_in.W = 350.0
+        self.fl_in.W = 450.0
 
         self.splitter_shaft.power_fractions = np.r_[0.9]
         self.splitter_fluid.fluid_fractions = np.r_[0.8]
 
     def compute(self):
         self.bpr = self.splitter_fluid.fl_fan.W / self.splitter_fluid.fl_booster.W
-        self.fan_pr = self.fan.pr
-        self.booster_pr = self.booster.pr

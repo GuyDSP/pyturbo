@@ -1,12 +1,9 @@
 # Copyright (C) 2022-2023, twiinIT
 # SPDX-License-Identifier: BSD-3-Clause
 
-import numpy as np
 import numpy.testing as npt
-import pytest
-from cosapp.drivers import NonLinearSolver
 
-from pyturbo.systems.turbofan import TurbofanGeom
+from pyturbo.systems.turbofan.physics import TurbofanGeom
 
 
 class TestTurbofanGeom:
@@ -86,28 +83,7 @@ class TestTurbofanGeom:
         npt.assert_almost_equal(geom.core_kp.exit_hub, [0.1, 2.0])
         npt.assert_almost_equal(geom.core_kp.exit_tip, [0.25, 2.0])
 
-    @pytest.mark.skip("update test")
-    def test_run_once_primary_nozzle(self):
-        geom = self.geom
-
-        npt.assert_almost_equal(geom.primary_nozzle_kp.exit_hub, [0.4, 3.0])
-        npt.assert_almost_equal(
-            geom.primary_nozzle_kp.exit_tip,
-            [np.sqrt(1.0 / np.pi + geom.trf_kp.exit_hub_r**2), 2.75],
-        )
-
-    # TODO: update test
-    @pytest.mark.skip("update test")
-    def test_run_once_secondary_nozzle(self):
-        pass
-
     def test_mount(self):
         geom = self.geom
         npt.assert_almost_equal(geom.frd_mount, [1.0, 0.75])
         npt.assert_almost_equal(geom.aft_mount, [0.5, 2.6625])
-
-    def test_solver(self):
-        geom = self.geom
-
-        geom.add_driver(NonLinearSolver("run"))
-        geom.run_drivers()

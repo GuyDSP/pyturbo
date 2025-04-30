@@ -5,7 +5,7 @@ from pathlib import Path
 
 from cosapp.systems import System
 
-import pyturbo.systems.turbine.data as trb_data
+import pyturbo.systems.turbofan.data as tf_data
 from pyturbo.systems.fan_module import FanModule
 from pyturbo.systems.gas_generator import GasGenerator
 from pyturbo.systems.generic import GenericSystemView
@@ -14,8 +14,9 @@ from pyturbo.systems.nacelle import Nacelle
 from pyturbo.systems.nozzle import Nozzle
 from pyturbo.systems.structures import Channel
 from pyturbo.systems.turbine import Turbine
-from pyturbo.systems.turbofan import TurbofanAero, TurbofanGeom, TurbofanWeight
-from pyturbo.utils import load_from_json
+from pyturbo.systems.turbofan.physics import TurbofanAero, TurbofanGeom, TurbofanWeight
+from pyturbo.thermo import init_environment
+from pyturbo.utils import load_from_json, view_system
 
 
 class Turbofan(System):
@@ -88,7 +89,7 @@ class Turbofan(System):
 
     """
 
-    def setup(self, init_file: Path = None):
+    def setup(self):
         # geom
         self.add_child(
             TurbofanGeom("geom"),
@@ -103,12 +104,12 @@ class Turbofan(System):
         self.add_child(Inlet("inlet"), pulling=["fl_in", "pamb"])
         self.add_child(
             FanModule("fan_module"),
-            pulling={"bpr": "bpr", "N": "N1", "fan_diameter": "fan_diameter"},
+            pulling={"bpr": "bpr", "N": "N1"},
         )
         self.add_child(Channel("fan_duct"))
         self.add_child(GasGenerator("core"), pulling={"fuel_W": "fuel_W", "N": "N2"})
         self.add_child(Channel("tcf"))
-        self.add_child(Turbine("turbine"))
+        self.add_child(Turbine("turbine", config="lpt"))
         self.add_child(Channel("trf"))
         self.add_child(Nozzle("primary_nozzle"), pulling=["pamb"])
         self.add_child(Nozzle("secondary_nozzle"), pulling=["pamb"])
@@ -151,11 +152,7 @@ class Turbofan(System):
         self.connect(self.trf.fl_out, self.primary_nozzle.fl_in)
 
         # geometry connectors
-        self.connect(
-            self.geom,
-            self.fan_module,
-            {"fan_module_length": "length"},
-        )
+        self.connect(self.geom.fan_module_kp, self.fan_module.kp)
         self.connect(self.geom.inlet_kp, self.inlet.kp)
         self.connect(self.geom.core_kp, self.core.kp)
         self.connect(self.geom.tcf_kp, self.tcf.kp)
@@ -186,13 +183,21 @@ class Turbofan(System):
         for name in children_view_name:
             self.connect(self[name], self.view, {"occ_view": f"{name}_view"})
 
-        # solver
+        # off design method
         self.add_unknown("fl_in.W", max_rel_step=0.5)
 
-        # design method
+        # control mode
+        control_mode = self.add_design_method("control_mode")
+
+        control_mode.add_unknown("fuel_W", max_rel_step=0.1)
+        control_mode.add_target("N1")
+
+        # scaling method
         scaling = self.add_design_method("scaling")
 
-        scaling.add_unknown("fuel_W")
+        scaling.add_unknown("fuel_W", max_rel_step=0.5)
+        scaling.add_unknown("fan_diameter", max_rel_step=0.5)
+        scaling.add_target("thrust")
 
         scaling.extend(self.geom.design_methods["scaling"])
         scaling.extend(self.inlet.design_methods["scaling"])
@@ -201,18 +206,15 @@ class Turbofan(System):
         scaling.extend(self.core.design_methods["scaling"])
         scaling.extend(self.aero.design_methods["scaling"])
 
-        # tuning thrust
-        tuning = self.add_design_method("tuning_thrust")
-        tuning.add_unknown("fan_diameter", max_rel_step=0.5)
-        tuning.add_target("thrust")
-
-        # tuning bpr
-        tuning = self.add_design_method("tuning_bpr")
-        tuning.add_unknown("geom.core_inlet_radius_ratio", max_rel_step=0.8)
-        tuning.add_target("bpr")
-
         # init
-        load_from_json(self.turbine, Path(trb_data.__file__).parent / "lpt.json")
+        load_from_json(self, Path(tf_data.__file__).parent / "turbofan_default.json")
+        self.init_environment()
 
-        if init_file:
-            load_from_json(self, init_file)
+    def init_environment(self, mach=0.0, alt=0.0, dtamb=15.0):
+        """Initialize environement conditons."""
+        init_environment(self, mach=mach, alt=alt, dtamb=dtamb)
+        return self
+
+    def view_system(self):
+        """Return pyoccad view for jupyter lab."""
+        return view_system(self)
